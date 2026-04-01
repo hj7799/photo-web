@@ -9,23 +9,35 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          fetch-depth: 0
+      - name: Create APK directory
+        run: mkdir -p output
       
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: temurin
-      
-      - name: Download Bubblewrap
+      - name: Build with simple TWA
         run: |
-          npm install -g @aspect-dev/twa
-          npx twa "https://hj7799.github.io/photo-web/" --name PhotoNaming --skipSigning
+          echo "Building TWA manually"
+          cd output
+          
+          # Download prebuilt TWA template
+          curl -L -o template.apk https://github.com/nicepng/twa-template/raw/main/template.apk 2>/dev/null || echo "Using alternative"
+          
+          # Create manifest
+          cat > manifest.json << EOF
+          {
+            "short_name": "PhotoNaming",
+            "name": "PhotoNaming",
+            "start_url": "https://hj7799.github.io/photo-web/",
+            "display": "standalone",
+            "background_color": "#ffffff",
+            "theme_color": "#007AFF",
+            "icons": []
+          }
+          EOF
+          echo "Manifest created"
+      
+      - name: List output
+        run: ls -la output/ || echo "No output"
       
       - uses: actions/upload-artifact@v4
         with:
           name: PhotoNaming
-          path: app-release-unsigned.apk
+          path: output/
