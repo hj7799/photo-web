@@ -1,5 +1,4 @@
 name: Build APK
-
 on:
   push:
     branches: [ gh-pages ]
@@ -8,26 +7,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ubuntu:22.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: gh-pages
-      
-      - name: Install dependencies
+      - name: Download TWA tools
         run: |
-          apt-get update
-          apt-get install -y nodejs npm default-jdk
-      
+          curl -L -o twa-tools.zip https://github.com/GoogleChromeLabs/twa-tools/releases/download/v1.0.0/twa-tools-linux.zip
+          unzip -q twa-tools.zip
       - name: Build APK
         run: |
-          npm init -y
-          npm install -g pwa-builder
-          pwabuilder api https://hj7799.github.io/photo-web/ -p android -o .
-      
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+          cd twa-tools
+          ./twa "https://hj7799.github.io/photo-web/" --name PhotoNaming
+      - uses: actions/upload-artifact@v4
         with:
           name: PhotoNaming
-          path: "*.apk"
+          path: "twa-tools/*.apk"
