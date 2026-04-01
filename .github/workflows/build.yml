@@ -14,11 +14,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Install pwa-builder
+        run: npm install -g pwa-builder
       - name: Build APK
         run: |
-          npm init -y
-          npm install @aspect-dev/twa
-          npx twa "https://hj7799.github.io/photo-web/" --name PhotoNaming
+          pwabuilder api https://hj7799.github.io/photo-web/ -o . -p android
       - uses: actions/upload-artifact@v4
         with:
           name: PhotoNaming
