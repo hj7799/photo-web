@@ -12,31 +12,18 @@ jobs:
         with:
           ref: gh-pages
       
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: temurin
       
-      - name: Install Android SDK
+      - name: Download TWA
         run: |
-          mkdir -p android-sdk
-          cd android-sdk
-          curl -L -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          unzip -q cmdline-tools.zip
-          mkdir -p cmdline-tools/latest
-          mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
-          export ANDROID_HOME=$PWD
-          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-          yes | sdkmanager --licenses 2>/dev/null || true
-      
-      - name: Build with TWA
+          curl -L -o twa.jar https://github.com/GoogleChromeLabs/TWA/releases/download/1.0/TWA-1.0.jar
+      - name: Build
         run: |
-          npm init -y
-          npm install -g @aspect-dev/twa
-          npx twa "https://hj7799.github.io/photo-web/" --name PhotoNaming --skipSigning
+          java -jar twa.jar "https://hj7799.github.io/photo-web/" -n PhotoNaming -o output
       
       - uses: actions/upload-artifact@v4
         with:
           name: PhotoNaming
-          path: "*.apk"
+          path: output/*.apk
