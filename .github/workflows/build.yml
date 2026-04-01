@@ -17,12 +17,11 @@ jobs:
         with:
           node-version: 20
       
-      - name: Install pwa-builder
-        run: npm install -g @pwa-builder/cli
-      
-      - name: Build
+      - name: Install and Build
         run: |
-          pwabuilder api https://hj7799.github.io/photo-web/ -p android -o output
+          npm init -y
+          npm install pwa-builder
+          npx pwabuilder api https://hj7799.github.io/photo-web/ -p android -o output
       
       - uses: actions/upload-artifact@v4
         with:
