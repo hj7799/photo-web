@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
         with:
@@ -14,11 +14,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Install pwa-builder
-        run: npm install -g pwa-builder
-      - name: Build APK
+      - name: Install CocoaPods
+        run: sudo gem install cocoapods
+      - name: Build with TWA
         run: |
-          pwabuilder api https://hj7799.github.io/photo-web/ -o . -p android
+          npm init -y
+          npm install -g @aspect-dev/twa
+          npx twa "https://hj7799.github.io/photo-web/" --name PhotoNaming --skipSigning
       - uses: actions/upload-artifact@v4
         with:
           name: PhotoNaming
