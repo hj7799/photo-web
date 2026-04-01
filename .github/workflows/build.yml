@@ -9,7 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: List files
-        run: ls -la
-      - name: Hello world
-        run: echo "Hello"
+        with:
+          ref: gh-pages
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Install pwa-builder
+        run: npm install -g @pwa-builder/cli
+      
+      - name: Build
+        run: |
+          pwabuilder api https://hj7799.github.io/photo-web/ -p android -o output
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PhotoNaming
+          path: output/*.apk
