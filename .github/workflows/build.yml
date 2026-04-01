@@ -8,17 +8,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: gh-pages
-      - name: Build with TWA
-        uses: And炉/twa-builder@v1
+      - uses: actions/setup-node@v4
         with:
-          origin: "https://hj7799.github.io/photo-web/"
-          appName: "PhotoNaming"
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+          node-version: 20
+      - name: Build APK
+        run: |
+          npm init -y
+          npm install @aspect-dev/twa
+          npx twa "https://hj7799.github.io/photo-web/" --name PhotoNaming
+      - uses: actions/upload-artifact@v4
         with:
           name: PhotoNaming
-          path: app*.apk
+          path: "*.apk"
