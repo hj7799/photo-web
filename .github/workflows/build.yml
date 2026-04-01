@@ -1,0 +1,50 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ gh-pages ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: gh-pages
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+
+    - name: Install Capacitor
+      run: |
+        npm init -y
+        npm install @capacitor/core @capacitor/android @capacitor/cli
+
+    - name: Init Capacitor
+      run: |
+        npx cap init "PhotoNaming" "com.boyu.photonaming" --web-dir .
+        npx cap add android
+
+    - name: Build APK
+      run: |
+        cd android
+        chmod +x gradlew
+        ./gradlew assembleDebug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: PhotoNaming
+        path: android/app/build/outputs/apk/debug/app-debug.apk
