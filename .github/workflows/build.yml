@@ -1,4 +1,5 @@
 name: Build APK
+
 on:
   push:
     branches: [ gh-pages ]
@@ -11,13 +12,20 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: gh-pages
+          fetch-depth: 0
       
-      - name: Build with Bubblewrap
-        uses: nicesick/ghaction-bubblewrap@master
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          args: build "https://hj7799.github.io/photo-web/" -n PhotoNaming
+          java-version: 17
+          distribution: temurin
+      
+      - name: Download Bubblewrap
+        run: |
+          npm install -g @aspect-dev/twa
+          npx twa "https://hj7799.github.io/photo-web/" --name PhotoNaming --skipSigning
       
       - uses: actions/upload-artifact@v4
         with:
           name: PhotoNaming
-          path: android/app/build/outputs/apk/debug/*.apk
+          path: app-release-unsigned.apk
