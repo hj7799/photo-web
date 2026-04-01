@@ -1,4 +1,5 @@
 name: Build APK
+
 on:
   push:
     branches: [ gh-pages ]
@@ -6,22 +7,27 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
+    container: ubuntu:22.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           ref: gh-pages
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install CocoaPods
-        run: sudo gem install cocoapods
-      - name: Build with TWA
+      
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y nodejs npm default-jdk
+      
+      - name: Build APK
         run: |
           npm init -y
-          npm install -g @aspect-dev/twa
-          npx twa "https://hj7799.github.io/photo-web/" --name PhotoNaming --skipSigning
-      - uses: actions/upload-artifact@v4
+          npm install -g pwa-builder
+          pwabuilder api https://hj7799.github.io/photo-web/ -p android -o .
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
           name: PhotoNaming
           path: "*.apk"
