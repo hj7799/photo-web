@@ -12,21 +12,12 @@ jobs:
         with:
           ref: gh-pages
       
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
+      - name: Build with Bubblewrap
+        uses: nicesick/ghaction-bubblewrap@master
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: team_xxxxxxxx
-          vercel-project-id: prj_xxxxxxxx
-          vercel-args: --prod
-      
-      - name: Build APK from deployed URL
-        run: |
-          npm init -y
-          npm install -g @aspect-dev/twa
-          npx twa "https://photo-web-XXXXX.vercel.app/" --name PhotoNaming
+          args: build "https://hj7799.github.io/photo-web/" -n PhotoNaming
       
       - uses: actions/upload-artifact@v4
         with:
           name: PhotoNaming
-          path: "*.apk"
+          path: android/app/build/outputs/apk/debug/*.apk
